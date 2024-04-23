@@ -105,6 +105,9 @@ Clase Tablero:
 - actualizar_tablero
 - verificar_ganador
 - resetear_tablero
+## Diagrama UML:
+
+![img_15.png](img_15.png)
 
 ## Organizacion:
 
