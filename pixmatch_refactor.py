@@ -108,8 +108,9 @@ def leaderboard_manager(what_to_do):
                 leaderboard = dict(
                     sorted(leaderboard.items(), key=lambda item: item[1]['HighestScore'], reverse=True))  # Sort the leaderboard in descending order based on the highest score
 
-                if len(leaderboard) > 3:  # Keep only the top 3 entries in the leaderboard. WE NEED TO CHANGE TO 4 ENTRIES IN THE TOP
-                    for i in range(len(leaderboard) - 3): leaderboard.popitem()  # Remove the last key-value pair
+                if len(leaderboard) > 4:  # Keep only the top 4 entries in the leaderboard.
+                    for i in range(len(leaderboard) - 4):
+                        leaderboard.popitem()  # Remove the last key-value pair
 
                 json.dump(leaderboard, open(actual_directory + 'leaderboard.json', 'w'))  # Write the updated leaderboard data back to the file
 
@@ -122,7 +123,7 @@ def leaderboard_manager(what_to_do):
                     sorted(leaderboard.items(), key=lambda item: item[1]['HighestScore'], reverse=True))  # sort desc
 
                 # Display the leaderboard:
-                column_winner, column_winner_up1, column_winner_up2, column_winner_up3 = st.columns((2, 3, 3, 3))
+                column_winner, column_winner_up1, column_winner_up2, column_winner_up3, column_winner_up4 = st.columns((2, 3, 3, 3, 3))
                 rank_count = 0
                 for vkey in leaderboard.keys():
                     if leaderboard[vkey]['NameCountry'] != '':
@@ -136,7 +137,10 @@ def leaderboard_manager(what_to_do):
                                 f"🥈 | {leaderboard[vkey]['NameCountry']}: :red[{leaderboard[vkey]['HighestScore']}]")
                         elif rank_count == 3:
                             column_winner_up3.write(
-                                f"🥈 | {leaderboard[vkey]['NameCountry']}: :red[{leaderboard[vkey]['HighestScore']}]")
+                                f"🥉 | {leaderboard[vkey]['NameCountry']}: :red[{leaderboard[vkey]['HighestScore']}]")
+                        elif rank_count == 4:
+                            column_winner_up4.write(
+                                f"4️⃣ | {leaderboard[vkey]['NameCountry']}: :red[{leaderboard[vkey]['HighestScore']}]")
 
 
 def initial_page():
@@ -365,7 +369,7 @@ def new_game():
 
     reset_board()
     total_cells_per_row_or_col = mystate.GameDetails[2]
-
+    attempts = (total_cells_per_row_or_col ** 2) // 2 + 1  # max attempts
     # Reduce gap from page top for sidebar
     reduce_gap_from_page_top('sidebar')
 
@@ -453,7 +457,7 @@ def new_game():
 
             elif mystate.player_buttons[vcell]['isTrueFalse'] == False:
                 globals()['cols' + arr_ref][vcell - mval].markdown(pressed_emoji.replace('|fill_variable|', '❌'), True)
-
+                attempts -= 1
         else:
             vemoji = mystate.player_buttons[vcell]['eMoji']
             globals()['cols' + arr_ref][vcell - mval].button(vemoji, on_click=pressed_check, args=(vcell,),
@@ -462,8 +466,14 @@ def new_game():
     st.caption('')  # vertical filler
     st.markdown(horizontal_bar, True)
 
+    if attempts <= 0:
+        st.snow()
+        tm.sleep(5)
+        mystate.runpage = main
+        st.rerun()
+
     # Check if all cells are pressed
-    if len(mystate.expired_cells) == (total_cells_per_row_or_col ** 2):
+    elif len(mystate.expired_cells) == (total_cells_per_row_or_col ** 2):
         leaderboard_manager('write')
 
         # Display balloons for positive score, snow for negative score

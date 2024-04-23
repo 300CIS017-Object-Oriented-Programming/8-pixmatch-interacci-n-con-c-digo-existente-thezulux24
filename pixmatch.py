@@ -228,10 +228,15 @@ def ScoreEmoji():
     elif mystate.myscore > 10: return '😁'
 
 def NewGame():
+
+
+
     ResetBoard()
     total_cells_per_row_or_col = mystate.GameDetails[2]
 
+
     ReduceGapFromPageTop('sidebar')
+
     with st.sidebar:
         st.subheader(f"🖼️ Pix Match: {mystate.GameDetails[0]}")
         st.markdown(horizontal_bar, True)
@@ -308,12 +313,15 @@ def NewGame():
             elif mystate.plyrbtns[vcell]['isTrueFalse'] == False:
                 globals()['cols' + arr_ref][vcell-mval].markdown(pressed_emoji.replace('|fill_variable|', '❌'), True)
 
+
         else:
             vemoji = mystate.plyrbtns[vcell]['eMoji']
             globals()['cols' + arr_ref][vcell-mval].button(vemoji, on_click=PressedCheck, args=(vcell, ), key=f"B{vcell}")
 
     st.caption('') # vertical filler
     st.markdown(horizontal_bar, True)
+
+
 
     if len(mystate.expired_cells) == (total_cells_per_row_or_col ** 2):
         Leaderboard('write')
