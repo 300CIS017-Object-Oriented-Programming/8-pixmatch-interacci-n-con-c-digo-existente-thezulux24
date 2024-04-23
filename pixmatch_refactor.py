@@ -246,7 +246,7 @@ def reset_board():
 
     # Loop through each button cell to assign emojis
     for vcell in range(1, ((total_cells_per_row_or_col ** 2) + 1)):
-         random_emoji_index = random.randint(1, len(mystate.emoji_bank)) - 1
+        random_emoji_index = random.randint(1, len(mystate.emoji_bank)) - 1
         if mystate.player_buttons[vcell]['isPressed'] == False:
             vemoji = mystate.emoji_bank[ random_emoji_index]
             mystate.player_buttons[vcell]['eMoji'] = vemoji
@@ -333,7 +333,7 @@ def pre_new_game():
     for vcell in range(1, ((total_cells_per_row_or_col ** 2) + 1)): mystate.player_buttons[vcell] = {'isPressed': False, 'isTrueFalse': False, 'eMoji': ''}
 
 
-def ScoreEmoji():
+def score_emoji():
     """
     Determine the appropriate emoji based on the player's score
     """
@@ -354,11 +354,22 @@ def ScoreEmoji():
         return '😁'
 
 
-def NewGame():
+def new_game():
+    """
+       Function to initialize a new game session. This function resets the game board, displays the game interface including
+       the sidebar with game details and score, generates buttons for each cell on the board, handles button clicks and
+       updates the score, and checks for game completion to display appropriate effects. It also manages the auto-refresh
+       timer, reads and writes to the leaderboard, and returns to the main page after the game is completed.
+    """
+
+
     reset_board()
     total_cells_per_row_or_col = mystate.GameDetails[2]
 
+    # Reduce gap from page top for sidebar
     reduce_gap_from_page_top('sidebar')
+
+    # Sidebar layout
     with st.sidebar:
         st.subheader(f"🖼️ Pix Match: {mystate.GameDetails[0]}")
         st.markdown(horizontal_bar, True)
@@ -369,26 +380,31 @@ def NewGame():
         if aftimer > 0: mystate.my_score -= 1
 
         st.info(
-            f"{ScoreEmoji()} Score: {mystate.my_score} | Pending: {(total_cells_per_row_or_col ** 2) - len(mystate.expired_cells)}")
+            f"{score_emoji()} Score: {mystate.my_score} | Pending: {(total_cells_per_row_or_col ** 2) - len(mystate.expired_cells)}")
 
         st.markdown(horizontal_bar, True)
         if st.button(f"🔙 Return to Main Page", use_container_width=True):
-            mystate.runpage = Main
+            mystate.runpage = main
             st.rerun()
 
+    # Read leaderboard
     leaderboard_manager('read')
+
+    # Picture Positions
     st.subheader("Picture Positions:")
     st.markdown(horizontal_bar, True)
 
-    # Set Board Dafaults
+    # Set board defaults
     st.markdown("<style> div[class^='css-1vbkxwb'] > p { font-size: 1.5rem; } </style> ",
                 unsafe_allow_html=True)  # make button face big
-
+    # Create columns for each row
     for i in range(1, (total_cells_per_row_or_col + 1)):
         total_cells = ([1] * total_cells_per_row_or_col) + [2]  # 2 = rt side padding
         globals()['cols' + str(i)] = st.columns(total_cells)
-
+    # Display buttons for each cell
     for vcell in range(1, (total_cells_per_row_or_col ** 2) + 1):
+
+        # Display buttons for each cell
         if 1 <= vcell <= (total_cells_per_row_or_col * 1):
             arr_ref = '1'
             mval = 0
@@ -429,6 +445,7 @@ def NewGame():
             arr_ref = '10'
             mval = (total_cells_per_row_or_col * 9)
 
+        # Clear button content if pressed, else display emoji
         globals()['cols' + arr_ref][vcell - mval] = globals()['cols' + arr_ref][vcell - mval].empty()
         if mystate.player_buttons[vcell]['isPressed'] == True:
             if mystate.player_buttons[vcell]['isTrueFalse'] == True:
@@ -445,20 +462,32 @@ def NewGame():
     st.caption('')  # vertical filler
     st.markdown(horizontal_bar, True)
 
+    # Check if all cells are pressed
     if len(mystate.expired_cells) == (total_cells_per_row_or_col ** 2):
         leaderboard_manager('write')
 
+        # Display balloons for positive score, snow for negative score
         if mystate.my_score > 0:
             st.balloons()
         elif mystate.my_score <= 0:
             st.snow()
 
+        # Wait for 5 seconds before returning to main page
         tm.sleep(5)
-        mystate.runpage = Main
+        mystate.runpage = main
         st.rerun()
 
 
-def Main():
+def main():
+
+    """
+    Function to display the main page of the game. It sets up the layout, including the sidebar for game settings
+    and options. It allows the user to select the difficulty level and input their name and country for the leaderboard.
+    The function also handles the creation of a new game session when the user clicks the 'New Game' button, based on the
+    selected difficulty level. It then redirects to the 'new_game' function to start the game.
+    """
+
+
     st.markdown('<style>[data-testid="stSidebar"] > div:first-child {width: 310px;}</style>',
                 unsafe_allow_html=True, )  # reduce sidebar width
     st.markdown(purple_button_colour, unsafe_allow_html=True)
@@ -487,11 +516,11 @@ def Main():
             leaderboard_manager('create')
 
             pre_new_game()
-            mystate.runpage = NewGame
+            mystate.runpage = new_game
             st.rerun()
 
         st.markdown(horizontal_bar, True)
 
 
-if 'runpage' not in mystate: mystate.runpage = Main
+if 'runpage' not in mystate: mystate.runpage = main
 mystate.runpage()
