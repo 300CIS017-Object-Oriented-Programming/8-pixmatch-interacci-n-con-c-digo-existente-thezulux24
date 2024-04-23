@@ -10,8 +10,9 @@ from streamlit_autorefresh import st_autorefresh
 st.set_page_config(page_title = "PixMatch", page_icon="🕹️", layout = "wide", initial_sidebar_state = "expanded")
 
 vDrive = os.path.splitdrive(os.getcwd())[0]
-if vDrive == "C:": vpth = "C:/Users/Shawn/dev/utils/pixmatch/"   # local developer's disc
-else: vpth = "./"
+#if vDrive == "C:": vpth = "C:/Users/Shawn/dev/utils/pixmatch/"   # local developer's disc
+#else: vpth = "./"
+vpth = "./"
 
 sbe = """<span style='font-size: 140px;
                       border-radius: 7px;
@@ -227,10 +228,15 @@ def ScoreEmoji():
     elif mystate.myscore > 10: return '😁'
 
 def NewGame():
+
+
+
     ResetBoard()
     total_cells_per_row_or_col = mystate.GameDetails[2]
 
+
     ReduceGapFromPageTop('sidebar')
+
     with st.sidebar:
         st.subheader(f"🖼️ Pix Match: {mystate.GameDetails[0]}")
         st.markdown(horizontal_bar, True)
@@ -307,12 +313,15 @@ def NewGame():
             elif mystate.plyrbtns[vcell]['isTrueFalse'] == False:
                 globals()['cols' + arr_ref][vcell-mval].markdown(pressed_emoji.replace('|fill_variable|', '❌'), True)
 
+
         else:
             vemoji = mystate.plyrbtns[vcell]['eMoji']
             globals()['cols' + arr_ref][vcell-mval].button(vemoji, on_click=PressedCheck, args=(vcell, ), key=f"B{vcell}")
 
     st.caption('') # vertical filler
     st.markdown(horizontal_bar, True)
+
+
 
     if len(mystate.expired_cells) == (total_cells_per_row_or_col ** 2):
         Leaderboard('write')

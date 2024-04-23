@@ -45,3 +45,81 @@ Detalla en este markdown lo siguiente:
 - **Métodos Importantes:** Enumera los métodos principales para cada clase. Incluye una descripción de cuál sería la utilidad de cada método
 - **Imagen del UML del diagrama de clases**  Adjunta una imagen del UML del diagrama de clases como una forma visual de planificar y entender la estructura de las clases, métodos, atributos y relaciones que podría tener una versión mejorada del código fuente.
 - **Organización de archivos:** Propon una estructura de organización de los archivos de este proyecto para que no queden todos en la raiz principal. Investiga cuáles podrían ser buenas formas de organizar los directorios y a partir de tu investigación indica qué directorios crearías y cómo los organizarías. 
+
+
+## clases:
+ 
+Jugador:
+- Propósito: Representa a un jugador del juego.
+- Justificación: Los jugadores son entidades principales en el juego y contienen información como nombre y puntaje.
+
+Tablero:
+-Propósito: Representa el tablero de juego.
+-Justificación: El tablero es una entidad central en el juego y contendrá la lógica para manejar el estado del juego y las interacciones entre los jugadores.
+
+Juego:
+
+- Propósito: Maneja la lógica del juego y coordina las interacciones entre jugadores y el tablero.
+- Justificación: Un objeto juego encapsulará todas las funcionalidades relacionadas con el progreso del juego, incluyendo iniciar, pausar, y terminar el juego.
+
+
+Leaderboard:
+- Propósito: Representa el leaderboard del juego.
+- Justificación: El leaderboard es una entidad central en el juego que maneja la información de los jugadores y sus puntajes.
+
+
+
+
+## métodos:
+
+
+
+Clase Jugador:
+
+
+- obtener_nombre
+- obtener_pais
+- get_puntaje
+- set_puntaje
+
+Clase Juego: 
+
+
+- iniciar_juego
+- gestionar_turno
+- verificar_fin_juego
+- actualizar_estado_juego
+- mostrar_resultados
+
+Clase Leaderboard:
+
+
+- introducir_jugador
+- obtener_top_jugadores
+
+
+Clase Tablero:
+
+- inicializar_tablero
+- mostrar_tablero
+- actualizar_tablero
+- verificar_ganador
+- resetear_tablero
+## Diagrama UML:
+
+![img_15.png](img_15.png)
+
+## Organizacion:
+
+- pixmatch/
+  - docs/
+    - ...
+  - src/
+    - Jugador.py
+    - Juego.py
+    - Leaderboard.py
+    - Tablero.py
+  - sources/ 
+    - (recursos del juego) 
+    -  ...
+  - main.py
